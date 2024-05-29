@@ -466,8 +466,7 @@ fn run(args: Args) -> Result<()> {
     let device = candle_examples::device(false)?;
     let image = image_preprocess(input_image)?.to_device(&device)?;
     let (3, height, width) = image.dims3()? else {panic!()};
-    //let (1, 3, height, width) = image.dims4()? else {panic!()};
-    println!("{width} {height}");
+
     let sd_config = match sd_version {
         StableDiffusionVersion::V1_5 => stable_diffusion::StableDiffusionConfig::v1_5(sliced_attention_size, Some(height), Some(width)),
         StableDiffusionVersion::V2_1 => stable_diffusion::StableDiffusionConfig::v2_1(sliced_attention_size, Some(height), Some(width)),
@@ -506,15 +505,13 @@ fn run(args: Args) -> Result<()> {
 
     let text_embeddings = Tensor::cat(&text_embeddings, D::Minus1)?;
     let text_embeddings = text_embeddings.repeat((bsize, 1, 1))?;
-    println!("{text_embeddings:?}");
 
-    println!("Building the autoencoder.");
+    println!("Autoencoder");
     let vae_weights = ModelFile::Vae.get(vae_weights, sd_version, use_f16)?;
     let vae = sd_config.build_vae(vae_weights, &device, dtype)?;
-    println!("Encode");
     let initial_latent_distribution = vae.encode(&image.unsqueeze(0)?)?;
 
-    println!("Building the unet.");
+    println!("U-Net");
     let unet_weights = ModelFile::Unet.get(unet_weights, sd_version, use_f16)?;
     let unet = sd_config.build_unet(unet_weights, &device, 4, use_flash_attn, dtype)?;
 
@@ -531,14 +528,13 @@ fn run(args: Args) -> Result<()> {
     let initial_latents_with_noise = scheduler.add_noise(&initial_latents, noise, timesteps[0])?.to_dtype(dtype)?;
     let mut latents = initial_latents_with_noise.clone();
 
-    println!("Loading the map");
     let map = map_preprocess(map_image)?;
 
-    println!("Sampling");
     for (timestep_index, &timestep) in timesteps.iter().enumerate() {
     	let noise = initial_latents.randn_like(0f64, 1f64)?;
     	let initial_latents_with_noise_t = scheduler.add_noise(&initial_latents, noise, timestep)?.to_dtype(dtype)?;
-     	let mask = map.gt(timestep as f32/n_steps as f32)?.squeeze(0)?.to_dtype(dtype)?;
+        println!("{}", timestep_index as f32/n_steps as f32);
+     	let mask = map.gt(timestep_index as f32/n_steps as f32)?.squeeze(0)?.to_dtype(dtype)?;
       	let mask = Tensor::stack(&[&mask,&mask,&mask,&mask], 0)?.to_device(&device)?;
     	latents = ((initial_latents_with_noise_t * mask.clone())? + ((1.-mask) * latents)?)?;
         let start_time = std::time::Instant::now();
@@ -577,7 +573,6 @@ fn run(args: Args) -> Result<()> {
         }
     }
 
-    println!("Generating the final image",);
     save_image(
         &vae,
         &latents.unsqueeze(0)?,
