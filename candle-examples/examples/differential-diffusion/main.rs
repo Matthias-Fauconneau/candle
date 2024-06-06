@@ -86,12 +86,6 @@ struct Args {
     #[arg(long)]
     guidance_scale: Option<f64>,
 
-    /// The strength, indicates how much to transform the initial image. The
-    /// value must be between 0 and 1, a value of 1 discards the initial image
-    /// information.
-    #[arg(long, default_value_t = 0.8)]
-    img2img_strength: f64,
-
     /// The seed to use when generating random samples.
     #[arg(long)]
     seed: Option<u64>,
@@ -464,7 +458,7 @@ fn run(args: Args) -> Result<()> {
     };
     let dtype = if use_f16 { DType::F16 } else { DType::F32 };
     let device = candle_examples::device(false)?;
-    let image = image_preprocess(input_image)?.to_device(&device)?;
+    let image = image_preprocess(input_image)?.to_device(&device)?.to_dtype(dtype)?;
     let (3, height, width) = image.dims3()? else {panic!()};
 
     let sd_config = match sd_version {
