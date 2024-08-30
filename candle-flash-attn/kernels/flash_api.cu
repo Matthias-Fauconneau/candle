@@ -3,13 +3,23 @@
 #include "flash_fwd_launch_template.h"
 
 void run_mha_fwd(Flash_fwd_params &params, cudaStream_t stream) {
-  FP16_SWITCH(!params.is_bf16, [&] {
+  /*FP16_SWITCH(!params.is_bf16, [&] {
       HEADDIM_SWITCH(params.d, [&] {
           BOOL_SWITCH(params.is_causal, Is_causal, [&] {
               run_mha_fwd_<elem_type, kHeadDim, Is_causal>(params, stream);
           });
       });
-  });
+  });*/
+ //printf("%i\n", !params.is_bf16);
+ //printf("%i\n", params.d);
+ //printf("%i\n", params.is_causal);
+ using elem_type = cutlass::half_t;
+ constexpr static int kHeadDim = 64;
+ constexpr static bool Is_causal = false;
+ if (params.is_bf16 != false) { printf("!!! bf16 !!!\n"); }
+ if (params.is_causal != Is_causal) { printf("!!! is_causal !!!\n"); }
+ if (params.d != kHeadDim) { printf("!!! kHeadDim %i !!!", params.d); }
+ run_mha_fwd_<elem_type, kHeadDim, Is_causal>(params, stream);
 }
 
 extern "C" void run_mha(

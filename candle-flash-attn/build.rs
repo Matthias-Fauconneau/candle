@@ -4,40 +4,9 @@
 use anyhow::{Context, Result};
 use std::path::PathBuf;
 
-const KERNEL_FILES: [&str; 33] = [
+const KERNEL_FILES: [&str; 2] = [
     "kernels/flash_api.cu",
-    "kernels/flash_fwd_hdim128_fp16_sm80.cu",
-    "kernels/flash_fwd_hdim160_fp16_sm80.cu",
-    "kernels/flash_fwd_hdim192_fp16_sm80.cu",
-    "kernels/flash_fwd_hdim224_fp16_sm80.cu",
-    "kernels/flash_fwd_hdim256_fp16_sm80.cu",
-    "kernels/flash_fwd_hdim32_fp16_sm80.cu",
-    "kernels/flash_fwd_hdim64_fp16_sm80.cu",
-    "kernels/flash_fwd_hdim96_fp16_sm80.cu",
-    "kernels/flash_fwd_hdim128_bf16_sm80.cu",
-    "kernels/flash_fwd_hdim160_bf16_sm80.cu",
-    "kernels/flash_fwd_hdim192_bf16_sm80.cu",
-    "kernels/flash_fwd_hdim224_bf16_sm80.cu",
-    "kernels/flash_fwd_hdim256_bf16_sm80.cu",
-    "kernels/flash_fwd_hdim32_bf16_sm80.cu",
-    "kernels/flash_fwd_hdim64_bf16_sm80.cu",
-    "kernels/flash_fwd_hdim96_bf16_sm80.cu",
-    "kernels/flash_fwd_hdim128_fp16_causal_sm80.cu",
-    "kernels/flash_fwd_hdim160_fp16_causal_sm80.cu",
-    "kernels/flash_fwd_hdim192_fp16_causal_sm80.cu",
-    "kernels/flash_fwd_hdim224_fp16_causal_sm80.cu",
-    "kernels/flash_fwd_hdim256_fp16_causal_sm80.cu",
-    "kernels/flash_fwd_hdim32_fp16_causal_sm80.cu",
-    "kernels/flash_fwd_hdim64_fp16_causal_sm80.cu",
-    "kernels/flash_fwd_hdim96_fp16_causal_sm80.cu",
-    "kernels/flash_fwd_hdim128_bf16_causal_sm80.cu",
-    "kernels/flash_fwd_hdim160_bf16_causal_sm80.cu",
-    "kernels/flash_fwd_hdim192_bf16_causal_sm80.cu",
-    "kernels/flash_fwd_hdim224_bf16_causal_sm80.cu",
-    "kernels/flash_fwd_hdim256_bf16_causal_sm80.cu",
-    "kernels/flash_fwd_hdim32_bf16_causal_sm80.cu",
-    "kernels/flash_fwd_hdim64_bf16_causal_sm80.cu",
-    "kernels/flash_fwd_hdim96_bf16_causal_sm80.cu",
+    "kernels/flash_fwd_hdim64_fp16_sm80.cu"
 ];
 
 fn main() -> Result<()> {
